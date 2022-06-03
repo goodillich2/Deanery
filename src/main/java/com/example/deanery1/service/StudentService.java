@@ -3,7 +3,7 @@ package com.example.deanery1.service;
 import com.example.deanery1.Dto.ProductDto;
 import com.example.deanery1.model.Group;
 import com.example.deanery1.model.Student;
-import com.example.deanery1.repository.ProductRepository;
+import com.example.deanery1.repository.StudentRepository;
 import lombok.AllArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -14,34 +14,34 @@ import java.util.Optional;
 
 @Service
 @AllArgsConstructor
-public class ProductService {
+public class StudentService {
 
     @Autowired
-    private  ProductRepository productRepository;
+    private StudentRepository studentRepository;
 
     public void createProduct(ProductDto productDto, Group group) {
         Student student = new Student();
         student.setName(productDto.getName());
-        student.setPrice(productDto.getPrice());
+        student.setSurname(productDto.getSurname());
         student.setImageURL(productDto.getImageURL());
-        student.setCategory(group);
-        student.setDescription(productDto.getDescription());
-        productRepository.save(student);
+        student.setGroup(group);
+        student.setPersonalInfo(productDto.getPersonalInfo());
+        studentRepository.save(student);
     }
 
     public ProductDto getProductDto(Student student) {
         ProductDto productDto = new ProductDto();
-        productDto.setDescription(student.getDescription());
+        productDto.setSurname(student.getSurname());
         productDto.setImageURL(student.getImageURL());
         productDto.setName(student.getName());
-        productDto.setCategoryId(student.getCategory().getId());
-        productDto.setPrice(student.getPrice());
+        productDto.setGroupId(student.getGroup().getId());
+        productDto.setPersonalInfo(student.getPersonalInfo());
         productDto.setId(student.getId());
         return productDto;
     }
 
     public List<ProductDto> getAllProducts() {
-        List<Student> allStudents = productRepository.findAll();
+        List<Student> allStudents = studentRepository.findAll();
 
         List<ProductDto> productDtos = new ArrayList<>();
         for(Student student : allStudents) {
@@ -51,21 +51,21 @@ public class ProductService {
     }
 
     public void updateProduct(ProductDto productDto, int productId) throws Exception {
-        Optional<Student> optionalProduct = productRepository.findById(productId);
+        Optional<Student> optionalProduct = studentRepository.findById(productId);
         // throw an exception if student does not exists
         if (!optionalProduct.isPresent()) {
             throw new Exception("student not present");
         }
         Student student = optionalProduct.get();
-        student.setDescription(productDto.getDescription());
+        student.setPersonalInfo(productDto.getPersonalInfo());
         student.setImageURL(productDto.getImageURL());
         student.setName(productDto.getName());
-        student.setPrice(productDto.getPrice());
-        productRepository.save(student);
+        student.setSurname(productDto.getSurname());
+        studentRepository.save(student);
     }
 
     public Student findById(Integer productId) throws Exception {
-        Optional<Student> optionalProduct =  productRepository.findById(productId);
+        Optional<Student> optionalProduct =  studentRepository.findById(productId);
         if (!optionalProduct.isPresent()) {
             throw new Exception("student does not exist");
         }
@@ -74,7 +74,7 @@ public class ProductService {
     }
 
     public List<ProductDto> getAllProductsFromOneCategory(int category_id) {
-        List<Student> allStudents = productRepository.getAllByGroup_Id(category_id);
+        List<Student> allStudents = studentRepository.getAllByGroup_Id(category_id);
 
         List<ProductDto> productDtos = new ArrayList<>();
         for(Student student : allStudents) {
@@ -84,7 +84,7 @@ public class ProductService {
     }
 
     public void deleteProduct(int id){
-        productRepository.deleteById(id);
+        studentRepository.deleteById(id);
     }
 
 
