@@ -1,6 +1,6 @@
 package com.example.deanery1.service;
 
-import com.example.deanery1.Dto.ProductDto;
+import com.example.deanery1.Dto.StudentDto;
 import com.example.deanery1.model.Group;
 import com.example.deanery1.model.Student;
 import com.example.deanery1.repository.StudentRepository;
@@ -19,71 +19,71 @@ public class StudentService {
     @Autowired
     private StudentRepository studentRepository;
 
-    public void createProduct(ProductDto productDto, Group group) {
+    public void createStudents(StudentDto studentDto, Group group) {
         Student student = new Student();
-        student.setName(productDto.getName());
-        student.setSurname(productDto.getSurname());
-        student.setImageURL(productDto.getImageURL());
+        student.setName(studentDto.getName());
+        student.setSurname(studentDto.getSurname());
+        student.setImageURL(studentDto.getImageURL());
         student.setGroup(group);
-        student.setPersonalInfo(productDto.getPersonalInfo());
+        student.setPersonalInfo(studentDto.getPersonalInfo());
         studentRepository.save(student);
     }
 
-    public ProductDto getProductDto(Student student) {
-        ProductDto productDto = new ProductDto();
-        productDto.setSurname(student.getSurname());
-        productDto.setImageURL(student.getImageURL());
-        productDto.setName(student.getName());
-        productDto.setGroupId(student.getGroup().getId());
-        productDto.setPersonalInfo(student.getPersonalInfo());
-        productDto.setId(student.getId());
-        return productDto;
+    public StudentDto getStudentDto(Student student) {
+        StudentDto studentDto = new StudentDto();
+        studentDto.setSurname(student.getSurname());
+        studentDto.setImageURL(student.getImageURL());
+        studentDto.setName(student.getName());
+        studentDto.setGroupId(student.getGroup().getId());
+        studentDto.setPersonalInfo(student.getPersonalInfo());
+        studentDto.setId(student.getId());
+        return studentDto;
     }
 
-    public List<ProductDto> getAllProducts() {
+    public List<StudentDto> getAllStudents() {
         List<Student> allStudents = studentRepository.findAll();
 
-        List<ProductDto> productDtos = new ArrayList<>();
+        List<StudentDto> studentDtos = new ArrayList<>();
         for(Student student : allStudents) {
-            productDtos.add(getProductDto(student));
+            studentDtos.add(getStudentDto(student));
         }
-        return productDtos;
+        return studentDtos;
     }
 
-    public void updateProduct(ProductDto productDto, int productId) throws Exception {
-        Optional<Student> optionalProduct = studentRepository.findById(productId);
+    public void updateStudent(StudentDto studentDto, int Id) throws Exception {
+        Optional<Student> optionalStudent = studentRepository.findById(Id);
         // throw an exception if student does not exists
-        if (!optionalProduct.isPresent()) {
+        if (!optionalStudent.isPresent()) {
             throw new Exception("student not present");
         }
-        Student student = optionalProduct.get();
-        student.setPersonalInfo(productDto.getPersonalInfo());
-        student.setImageURL(productDto.getImageURL());
-        student.setName(productDto.getName());
-        student.setSurname(productDto.getSurname());
+        Student student = optionalStudent.get();
+        student.setPersonalInfo(studentDto.getPersonalInfo());
+        student.setImageURL(studentDto.getImageURL());
+        student.setName(studentDto.getName());
+        student.setSurname(studentDto.getSurname());
         studentRepository.save(student);
     }
 
     public Student findById(Integer productId) throws Exception {
-        Optional<Student> optionalProduct =  studentRepository.findById(productId);
-        if (!optionalProduct.isPresent()) {
+        Optional<Student> optionalStudent =  studentRepository.findById(productId);
+        if (!optionalStudent.isPresent()) {
             throw new Exception("student does not exist");
         }
-        Student student = optionalProduct.get();
+        Student student = optionalStudent.get();
         return student;
     }
 
-    public List<ProductDto> getAllProductsFromOneCategory(int category_id) {
+    public List<StudentDto> getAllStudentsFromOneGroup(int category_id) {
         List<Student> allStudents = studentRepository.getAllByGroup_Id(category_id);
 
-        List<ProductDto> productDtos = new ArrayList<>();
+        List<StudentDto> studentDtos = new ArrayList<>();
         for(Student student : allStudents) {
-            productDtos.add(getProductDto(student));
+            studentDtos.add(getStudentDto(student));
         }
-        return productDtos;
+        return studentDtos;
     }
 
-    public void deleteProduct(int id){
+    public void deleteStudent(int id){
         studentRepository.deleteById(id);
     }
 

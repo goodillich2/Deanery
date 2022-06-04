@@ -1,97 +1,119 @@
-//package com.example.deanery1.controller2;
-//
-//
-//import com.example.deanery1.Dto.ProductDto;
-//import com.example.deanery1.model.Group;
-//import com.example.deanery1.model.Student;
-//import com.example.deanery1.repository.GroupRepository;
-//import com.example.deanery1.service.StudentService;
-//import org.springframework.beans.factory.annotation.Autowired;
-//import org.springframework.stereotype.Controller;
-//import org.springframework.ui.Model;
-//import org.springframework.web.bind.annotation.*;
-//
-//import java.util.List;
-//import java.util.Optional;
-//
-//@Controller
-//@RequestMapping("/product")
-//public class ProductController {
-//    @Autowired
-//    StudentService studentService;
-//
-//    @Autowired
-//    GroupRepository categoryRepo;
-//
-//    @GetMapping("/add")
-//    public String  createProduct() {
-//        return "AddProductForm";
-//    }
-//
-//    @PostMapping("/add")
-//    public String  createProduct(@RequestParam("name") String name, @RequestParam("description") String description,
-//                                 @RequestParam("price") int price, @RequestParam("imageUrl") String imageURL,
-//                                 @RequestParam("categoryId") int categoryId) {
-//        ProductDto productDto = new ProductDto(name, imageURL, price, description,categoryId);
-//
-//        Optional<Group> optionalCategory = categoryRepo.findById(productDto.getCategoryId());
-//        if (!optionalCategory.isPresent()) {
-//            return "category does not exists";
-//        }
-//        studentService.createProduct(productDto, optionalCategory.get());
-//        return "redirect:/product/list";
-//    }
-//
-//    @GetMapping("/{categoryId}")
-//    public String  getProductsFromOneCategory(@PathVariable int categoryId, Model model) {
-//        List<ProductDto> products = studentService.getAllProductsFromOneCategory(categoryId);
-//        model.addAttribute("products", products);
-//        model.addAttribute("categoryId", categoryId);
-//        System.out.println(products);
-//        return "products";
-//    }
-//
-//    // create an api to edit the product
-//
-//    @GetMapping("/update/{productId}")
-//    public String  updateProduct(@PathVariable("productId") int productId, Model model) throws Exception {
-//        Student student = studentService.findById(productId);
-//        /*Optional<Group> optionalCategory = categoryRepo.findById(productId);
-//        if (!optionalCategory.isPresent()) {
-//            return "category does not exist";
-//        }*/
-//        model.addAttribute("product", student);
-//        return "UpdateProductForm";
-//    }
-//
-//
-//    @PostMapping("/update/{productId}")
-//    public String  updateProduct(@RequestParam("name") String name, @RequestParam("description") String description,
-//                                 @RequestParam("price") int price, @RequestParam("imageUrl") String imageURL, @RequestParam("id") int id, @RequestParam("categoryId") int categoryId,
-//                                 @PathVariable("productId") int productId) throws Exception {
-//        ProductDto productDto = new ProductDto(id, name, imageURL, price, description,categoryId);
-//        Optional<Group> optionalCategory = categoryRepo.findById(productDto.getCategoryId());
-//        if (!optionalCategory.isPresent()) {
-//            return "category does not exist";
-//        }
-//        System.out.println(productDto);
-//        studentService.updateProduct(productDto, productId);
-//        return "redirect:/product/list";
-//        }
-//
-//    @GetMapping("/list")
-//    public String  getAllProducts(Model model) {
-//        List<ProductDto> products = studentService.getAllProducts();
-//        model.addAttribute("products", products);
-//        return "adminProducts";
-//    }
-//
-//    @PostMapping("/delete/{id}")
-//    public String deleteProduct(@PathVariable("id") int id){
-//        studentService.deleteProduct(id);
-//        return "redirect:/product/list";
-//    }
-//
-//}
-//
-//
+package com.example.deanery1.controller2;
+
+
+import com.example.deanery1.Dto.StudentDto;
+import com.example.deanery1.model.Group;
+import com.example.deanery1.model.Student;
+import com.example.deanery1.repository.GroupRepository;
+import com.example.deanery1.repository.StudentRepository;
+import com.example.deanery1.service.StudentService;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
+import org.springframework.web.bind.annotation.*;
+
+import javax.servlet.http.HttpServletRequest;
+import java.util.List;
+import java.util.Optional;
+
+@Controller
+@RequestMapping("/student")
+public class ProductController {
+    @Autowired
+    StudentService studentService;
+
+    @Autowired
+    StudentRepository studentRepository;
+
+    @Autowired
+    GroupRepository categoryRepo;
+
+    @GetMapping("/add")
+    public String  createStudent() {
+        return "AddStudentForm";
+    }
+
+    @PostMapping("/add")
+    public String  createStudent(@RequestParam("name") String name, @RequestParam("personalInfo") String personalInfo,
+                                 @RequestParam("surname") String  surname, @RequestParam("imageUrl") String imageURL,
+                                 @RequestParam("groupId") int groupId) {
+        StudentDto studentDto = new StudentDto(name, surname, imageURL, personalInfo, groupId);
+
+        Optional<Group> optionalGroup = categoryRepo.findById(studentDto.getGroupId());
+        if (!optionalGroup.isPresent()) {
+            return "category does not exists";
+        }
+        studentService.createStudents(studentDto, optionalGroup.get());
+        return "redirect:/student/list";
+    }
+
+    @GetMapping("/{groupId}")
+    public String  getStudentsFromOneGroup(@PathVariable int groupId, Model model, HttpServletRequest httpServletRequest) {
+        String name = httpServletRequest.getParameter("name");
+        String surname = httpServletRequest.getParameter("surname");
+        if(name != null && surname != null){
+            List<Student> students =  studentRepository.getStudentByNameAndSurname(name, surname);
+            model.addAttribute("students", students);
+            model.addAttribute("groupId", groupId);
+        }
+        else {
+            List<StudentDto> students = studentService.getAllStudentsFromOneGroup(groupId);
+            model.addAttribute("students", students);
+            model.addAttribute("groupId", groupId);
+            System.out.println(students);
+        }
+
+        return "students";
+
+    }
+
+    // create an api to edit the product
+
+    @GetMapping("/update/{groupId}")
+    public String  updateStudent(@PathVariable("groupId") int groupId, Model model) throws Exception {
+        Student student = studentService.findById(groupId);
+        model.addAttribute("student", student);
+        return "UpdateStudentForm";
+    }
+
+
+    @PostMapping("/update/{studentId}")
+    public String  updateStudent(@RequestParam("name") String name, @RequestParam("personalInfo") String personalInfo,
+                                 @RequestParam("surname") String  surname, @RequestParam("imageUrl") String imageURL,
+                                 @RequestParam("id") int id, @RequestParam("groupId") int groupId, @PathVariable("studentId") int studentId) throws Exception {
+        StudentDto studentDto = new StudentDto(id, name, surname, imageURL, personalInfo, groupId);
+        Optional<Group> optionalGroup = categoryRepo.findById(studentDto.getGroupId());
+        if (!optionalGroup.isPresent()) {
+            return "group does not exist";
+        }
+        System.out.println(studentDto);
+        studentService.updateStudent(studentDto, studentId);
+        return "redirect:/student/list";
+    }
+
+    @GetMapping("/list")
+    public String  getAllStudents(Model model, HttpServletRequest httpServletRequest) {
+
+        String name = httpServletRequest.getParameter("name");
+        String surname = httpServletRequest.getParameter("surname");
+        if(name != null && surname != null){
+            List<Student> students =  studentRepository.getStudentByNameAndSurname(name, surname);
+            model.addAttribute("students", students);
+        }
+        else{
+            List<StudentDto> students = studentService.getAllStudents();
+            model.addAttribute("students", students);
+        }
+
+        return "adminStudents";
+    }
+
+    @PostMapping("/delete/{id}")
+    public String deleteStudent(@PathVariable("id") int id){
+        studentService.deleteStudent(id);
+        return "redirect:/student/list";
+    }
+
+}
+
+

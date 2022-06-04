@@ -8,7 +8,7 @@ import lombok.*;
 @Data
 @Getter
 @Setter
-public class ProductDto {
+public class StudentDto {
     // for create it can be optional
     // for update we need the id
     private Integer id;
@@ -18,7 +18,7 @@ public class ProductDto {
     private  String personalInfo;
     private  Integer groupId;
 
-    public ProductDto(String name, String surname, String imageURL, String personalInfo, Integer groupId) {
+    public StudentDto(String name, String surname, String imageURL, String personalInfo, Integer groupId) {
         this.name = name;
         this.surname = surname;
         this.imageURL = imageURL;

@@ -24,10 +24,15 @@ public class Student {
     private  String personalInfo;
 
 
+    @Transient
+    public int groupId;
+
+
+
     // Many to one relationship
     @ManyToOne
     @JoinColumn(name = "group_id")
-    Group group;
+    public Group group;
 
 
 }
